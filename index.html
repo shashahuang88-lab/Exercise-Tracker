@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动追踪 · Exercise Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F5F0;--surface:#FFF;--surface2:#F0EDE6;--border:#E2DDD5;
+  --text:#1A1714;--muted:#8A857C;
+  --ball:#C5E217;--ball-dark:#7A9200;--ball-bg:#F8FADF;
+  --strength:#3A6BC4;--strength-bg:#EBF0FA;
+  --yoga:#7C3AC4;--yoga-bg:#F0EBFA;
+  --coach:#3AC49A;--coach-bg:#EBF5F2;
+  --cardio:#E07B39;--cardio-bg:#FDF0E8;
+  --green:#2D9348;--green-bg:#EBF5EE;
+  --r:14px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:28px 16px 80px}
+.page{max-width:780px;margin:0 auto}
+
+/* Header */
+.header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px}
+.header h1{font-size:26px;font-weight:300;letter-spacing:-.5px;line-height:1.2}
+.header h1 span{font-weight:500}
+.hbtns{display:flex;gap:8px;align-items:center}
+.hbtn{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:20px;padding:6px 12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.hbtn:hover{background:var(--surface);color:var(--text)}
+.hbtn label{cursor:pointer}
+.hbtn input[type=file]{display:none}
+
+/* Tabs */
+.tabs{display:flex;gap:3px;margin-bottom:24px;background:var(--surface2);padding:4px;border-radius:var(--rs)}
+.tab{flex:1;text-align:center;padding:7px 4px;font-size:12px;font-weight:400;color:var(--muted);cursor:pointer;border-radius:6px;transition:all .15s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.tab.active{background:var(--surface);color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.nav-lbl{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);flex:1;text-align:center}
+.nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--muted);transition:all .15s}
+.nav-btn:hover{border-color:#aaa;color:var(--text)}
+
+/* Section title */
+.stitle{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:24px 0 10px}
+
+/* Weekly cards */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
+.card{background:var(--surface);border-radius:var(--r);padding:18px;border:1px solid var(--border);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.card.ball::before{background:var(--ball)}
+.card.strength::before{background:var(--strength)}
+.card.yoga::before{background:var(--yoga)}
+.card.cardio::before{background:var(--cardio)}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.ct{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.cg{font-size:11px;color:var(--muted);font-weight:300;margin-top:2px}
+.cv{font-size:34px;font-weight:300;letter-spacing:-1px;line-height:1;margin-bottom:2px}
+.cu{font-size:13px;color:var(--muted);margin-left:3px}
+.card.ball .cv{color:var(--ball-dark)}
+.card.strength .cv{color:var(--strength)}
+.card.yoga .cv{color:var(--yoga)}
+.card.cardio .cv{color:var(--cardio)}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;margin-bottom:10px}
+.badge.done{background:var(--green-bg);color:var(--green)}
+.badge.going{background:var(--surface2);color:var(--muted)}
+.badge.over{background:var(--ball-bg);color:var(--ball-dark)}
+.pbar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin:10px 0 14px}
+.pfill{height:100%;border-radius:2px;transition:width .4s}
+.card.ball .pfill{background:var(--ball)}
+.card.strength .pfill{background:var(--strength)}
+.card.yoga .pfill{background:var(--yoga)}
+.card.cardio .pfill{background:var(--cardio)}
+.logrow{display:flex;gap:7px;flex-wrap:wrap}
+.lbtn{font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--bg);cursor:pointer;transition:all .15s;color:var(--text)}
+.lbtn:hover{border-color:#aaa;background:var(--surface);transform:translateY(-1px)}
+.lbtn.undo{color:var(--muted);font-size:11px}
+
+/* Day grid */
+.daygrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.daycell{text-align:center}
+.dlbl{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.ddate{font-family:'DM Mono',monospace;font-size:12px;color:var(--text);margin-bottom:7px}
+.ddate.today{font-weight:600;color:var(--ball-dark)}
+.ddots{display:flex;flex-direction:column;gap:3px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.ball{background:var(--ball)}
+.dot.strength{background:var(--strength)}
+.dot.yoga{background:var(--yoga)}
+.dot.coach{background:var(--coach)}
+.dot.cardio{background:var(--cardio)}
+.dot.empty{background:var(--border)}
+
+/* Coach card */
+.coachcard{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);border-top:3px solid var(--coach);padding:18px;display:flex;align-items:center;gap:20px}
+.circles{display:flex;gap:8px}
+.circle{width:48px;height:48px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:300;transition:all .3s}
+.circle.filled{background:var(--coach-bg);border-color:var(--coach);color:var(--coach);font-weight:500}
+.clbl{font-size:10px;color:var(--muted);margin-top:3px;text-align:center}
+.cinfo h3{font-size:14px;font-weight:500;margin-bottom:2px}
+.cinfo p{font-size:12px;color:var(--muted);margin-bottom:10px}
+
+/* Summary cells */
+.sumgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.sumcell{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:14px;text-align:center}
+.sv{font-size:26px;font-weight:300;margin-bottom:3px}
+.sl{font-size:11px;color:var(--muted)}
+.sumcell.ball .sv{color:var(--ball-dark)}
+.sumcell.strength .sv{color:var(--strength)}
+.sumcell.yoga .sv{color:var(--yoga)}
+.sumcell.coach .sv{color:var(--coach)}
+.sumcell.cardio .sv{color:var(--cardio)}
+
+/* Month breakdown */
+.wkcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:8px}
+.wklbl{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px}
+.wkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.wkitem{}
+.wkitem .wi-lbl{font-size:11px;color:var(--muted);margin-bottom:4px}
+.wkitem .wi-val{font-size:16px;font-weight:400}
+.wkitem .wi-unit{font-size:11px;color:var(--muted);margin-left:3px}
+
+/* Year table */
+.ytable{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
+.ytable table{width:100%;border-collapse:collapse;min-width:600px}
+.ytable th,.ytable td{padding:9px 6px;text-align:center;font-size:12px;border-bottom:1px solid var(--border)}
+.ytable th{font-size:11px;font-weight:500;color:var(--muted);background:var(--surface2)}
+.ytable th:first-child,.ytable td:first-child{text-align:left;padding-left:14px;font-weight:500;border-right:1px solid var(--border);white-space:nowrap}
+.ytable tr:last-child td{border-bottom:none}
+.ytable .cur-month{background:rgba(197,226,23,.07)}
+.yval{font-weight:500;display:block;margin-bottom:3px}
+.ymini{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 4px}
+.ymini-fill{height:100%;border-radius:2px}
+.ytable tr:last-child th,.ytable tr:last-child td{border-bottom:none}
+
+/* Hit rate */
+.hitgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.hitcell{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:14px}
+.hl{font-size:11px;color:var(--muted);margin-bottom:6px}
+.hv{font-size:22px;font-weight:300;line-height:1}
+.hs{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* History */
+.histlist{display:flex;flex-direction:column;gap:7px}
+.histitem{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:flex-start;gap:11px}
+.hdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.hbody{flex:1;min-width:0}
+.hrow{display:flex;align-items:center;gap:7px}
+.htype{font-size:13px;font-weight:500}
+.hdetail{font-size:12px;color:var(--muted)}
+.hnotes{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5;font-style:italic}
+.hright{display:flex;align-items:flex-start;gap:7px;flex-shrink:0}
+.hdate{color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;padding-top:2px;white-space:nowrap}
+.hdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:17px;padding:0 2px;border-radius:4px;transition:all .15s;line-height:1}
+.hdel:hover{background:#fee;color:#c00}
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:40px}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:18px;padding:26px;width:min(420px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal h2{font-size:17px;font-weight:500;margin-bottom:5px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:18px}
+.modal label{display:block;font-size:13px;font-weight:500;margin-bottom:5px}
+.modal select,.modal input[type=date],.modal textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 11px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg);color:var(--text);margin-bottom:14px;display:block}
+.modal textarea{resize:vertical;min-height:76px;line-height:1.5}
+.mactions{display:flex;gap:9px;justify-content:flex-end;margin-top:4px}
+.mbtn{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:9px 20px;border-radius:20px;border:none;cursor:pointer;transition:all .15s}
+.mbtn.cancel{background:var(--surface2);color:var(--muted)}
+.mbtn.cancel:hover{background:var(--border)}
+.mbtn.save{background:var(--text);color:#fff}
+.mbtn.save:hover{opacity:.85}
+
+/* FAB */
+.fab{position:fixed;bottom:26px;right:26px;width:54px;height:54px;border-radius:50%;background:var(--text);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;transition:transform .15s;z-index:50}
+.fab:hover{transform:scale(1.08)}
+
+@media(max-width:520px){
+  .cards{grid-template-columns:1fr}
+  .sumgrid{grid-template-columns:1fr 1fr 1fr}
+  .hitgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <h1>运动<br><span>追踪</span></h1>
+  <div class="hbtns">
+    <button class="hbtn" onclick="exportData()">↓ 导出</button>
+    <button class="hbtn" onclick="document.getElementById('importFile').click()">↑ 导入</button>
+    <input type="file" id="importFile" accept=".json" onchange="importData(event)" style="display:none">
+    <button class="hbtn" onclick="goToday()">今天 Today</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('week',this)">本周</button>
+  <button class="tab" onclick="switchTab('month',this)">本月</button>
+  <button class="tab" onclick="switchTab('year',this)">全年</button>
+  <button class="tab" onclick="switchTab('history',this)">记录</button>
+</div>
+
+<!-- WEEK -->
+<div id="tab-week">
+  <div class="nav">
+    <button class="nav-btn" onclick="changeWeek(-1)">&#8592;</button>
+    <div class="nav-lbl" id="week-label"></div>
+    <button class="nav-btn" onclick="changeWeek(1)">&#8594;</button>
+  </div>
+  <div class="stitle">每周目标 Weekly Goals</div>
+  <div class="cards" id="weekly-cards"></div>
+  <div class="stitle">本周一览</div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+    <div class="daygrid" id="day-grid"></div>
+  </div>
+  <div class="stitle">教练课</div>
+  <div class="coachcard" id="coach-card"></div>
+</div>
+
+<!-- MONTH -->
+<div id="tab-month" style="display:none">
+  <div class="nav">
+    <button class="nav-btn" onclick="changeMonth(-1)">&#8592;</button>
+    <div class="nav-lbl" id="month-label"></div>
+    <button class="nav-btn" onclick="changeMonth(1)">&#8594;</button>
+  </div>
+  <div class="stitle">月度总计</div>
+  <div class="sumgrid" id="month-summary"></div>
+  <div class="stitle">周明细</div>
+  <div id="month-breakdown"></div>
+</div>
+
+<!-- YEAR -->
+<div id="tab-year" style="display:none">
+  <div class="nav">
+    <button class="nav-btn" onclick="changeYear(-1)">&#8592;</button>
+    <div class="nav-lbl" id="year-label"></div>
+    <button class="nav-btn" onclick="changeYear(1)">&#8594;</button>
+  </div>
+  <div class="stitle">年度总计</div>
+  <div class="sumgrid" id="year-summary"></div>
+  <div class="stitle">月度明细</div>
+  <div class="ytable" id="year-table"></div>
+  <div class="stitle">周目标达成率</div>
+  <div class="hitgrid" id="year-hitrate"></div>
+</div>
+
+<!-- HISTORY -->
+<div id="tab-history" style="display:none">
+  <div class="stitle">全部记录</div>
+  <div class="histlist" id="history-list"></div>
+</div>
+
+</div><!-- .page -->
+
+<button class="fab" onclick="openModal()">+</button>
+
+<!-- Modal -->
+<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h2>记录运动</h2>
+    <p>Log a workout session</p>
+    <label>类型 Type</label>
+    <select id="m-type" onchange="updateExtra()">
+      <option value="ball">打网球 Play Tennis</option>
+      <option value="strength">力量训练 Strength</option>
+      <option value="yoga">瑜伽 Yoga</option>
+      <option value="cardio">有氧其他 Other Cardio</option>
+      <option value="coach">教练课 Coach Session</option>
+    </select>
+    <label>日期 Date</label>
+    <input type="date" id="m-date">
+    <div id="m-extra-wrap">
+      <label>时长 Duration</label>
+      <select id="m-extra">
+        <option value="0.5">0.5 hr</option>
+        <option value="1" selected>1 hr</option>
+        <option value="1.5">1.5 hrs</option>
+        <option value="2">2 hrs</option>
+        <option value="2.5">2.5 hrs</option>
+        <option value="3">3 hrs</option>
+      </select>
+    </div>
+    <label>备注 Notes <span style="font-weight:300;color:var(--muted)">(可选)</span></label>
+    <textarea id="m-notes" placeholder="e.g. 练了发球和反手..."></textarea>
+    <div class="mactions">
+      <button class="mbtn cancel" onclick="closeModal()">取消</button>
+      <button class="mbtn save" onclick="saveEntry()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────────
+var GOALS = {
+  ball:     {label:'打网球', en:'Play Tennis',      unit:'hrs/wk', min:3, max:4, icon:'🎾'},
+  strength: {label:'力量训练', en:'Strength',       unit:'x/wk',   min:3, max:3, icon:'🏋️'},
+  yoga:     {label:'瑜伽',   en:'Yoga',             unit:'x/wk',   min:2, max:3, icon:'🧘'},
+  cardio:   {label:'有氧其他', en:'Other Cardio',   unit:'x/wk',   min:2, max:3, icon:'🏃'},
+  coach:    {label:'教练课', en:'Coach Session',    unit:'x/mo',   min:1, max:2, icon:'👟'}
+};
+var COLORS = {ball:'#C5E217', strength:'#3A6BC4', yoga:'#7C3AC4', cardio:'#E07B39', coach:'#3AC49A'};
+var DARKS  = {ball:'#7A9200', strength:'#3A6BC4', yoga:'#7C3AC4', cardio:'#C05A1A', coach:'#3AC49A'};
+var DAYS   = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+var weekOffset  = 0;
+var monthOffset = 0;
+var yearOffset  = 0;
+var activeTab   = 'week';
+
+// ─── Storage ─────────────────────────────────────────────────────────
+function getEntries(){try{return JSON.parse(localStorage.getItem('ex_entries')||'[]')}catch(e){return[]}}
+function saveEntries(a){localStorage.setItem('ex_entries',JSON.stringify(a))}
+
+// ─── Date helpers ────────────────────────────────────────────────────
+function fmt(d){
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){return String(n).padStart(2,'0')}
+
+function getMonday(date){
+  var d=new Date(date), day=d.getDay();
+  d.setDate(d.getDate()+(day===0?-6:1-day));
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function weekStart(){
+  var m=getMonday(new Date());
+  m.setDate(m.getDate()+weekOffset*7);
+  return m;
+}
+
+function monthRef(){
+  var n=new Date();
+  return new Date(n.getFullYear(),n.getMonth()+monthOffset,1);
+}
+
+function yearRef(){return new Date().getFullYear()+yearOffset}
+
+// fmtWeek: "2月24日 – 3月1日"
+function fmtWeek(start){
+  var end=new Date(start); end.setDate(end.getDate()+6);
+  return start.toLocaleString('zh-CN',{month:'short',day:'numeric'})+
+    ' – '+end.toLocaleString('zh-CN',{month:'short',day:'numeric'});
+}
+
+// contextDate: when viewing a past/future week, default to that Monday; else today
+function contextDate(){
+  return weekOffset===0 ? fmt(new Date()) : fmt(weekStart());
+}
+
+// ─── Entry stats ─────────────────────────────────────────────────────
+function weekDates(start){
+  var dates=[];
+  for(var i=0;i<7;i++){var d=new Date(start);d.setDate(d.getDate()+i);dates.push(fmt(d));}
+  return dates;
+}
+
+function getWeekEntries(start){
+  var dates=weekDates(start);
+  return getEntries().filter(function(e){return dates.indexOf(e.date)!==-1});
+}
+
+// getWeeksInMonth: all weeks (by Monday) whose Monday falls in the given month
+function getWeeksInMonth(ref){
+  var y=ref.getFullYear(),m=ref.getMonth();
+  var first=new Date(y,m,1), last=new Date(y,m+1,0);
+  var weeks=[], cur=getMonday(first);
+  // walk forward until Monday is past end of month
+  while(cur<=last){
+    if(cur.getMonth()===m) weeks.push(new Date(cur));
+    cur=new Date(cur); cur.setDate(cur.getDate()+7);
+  }
+  return weeks;
+}
+
+function calcStats(entries){
+  var s={ball:0,strength:0,yoga:0,cardio:0,coach:0};
+  entries.forEach(function(e){
+    if(e.type==='ball') s.ball+=Number(e.extra||1);
+    else if(e.type in s) s[e.type]++;
+  });
+  return s;
+}
+
+// Sum weekly stats for a list of week-starts
+// This is the single source of truth used by both Month and Year tabs
+function sumWeeks(weekStarts){
+  var s={ball:0,strength:0,yoga:0,cardio:0,coach:0};
+  weekStarts.forEach(function(ws){
+    var es=getWeekEntries(ws);
+    var w=calcStats(es);
+    s.ball+=w.ball; s.strength+=w.strength; s.yoga+=w.yoga; s.cardio+=w.cardio; s.coach+=w.coach;
+  });
+  return s;
+}
+
+// ─── Render helpers ──────────────────────────────────────────────────
+function badge(val,min,max){
+  if(val>=min){
+    if(val>max) return '<span class="badge over">↑ 超出目标</span>';
+    return '<span class="badge done">✓ 达标</span>';
+  }
+  return '<span class="badge going">进行中</span>';
+}
+
+function pct(val,min){return Math.min(100,Math.round(val/min*100))}
+
+function miniBar(val,goal,color){
+  var p=Math.min(100,Math.round(val/goal*100));
+  return '<div class="ymini"><div class="ymini-fill" style="width:'+p+'%;background:'+color+'"></div></div>';
+}
+
+function summaryHTML(stats,coachCount){
+  return '<div class="sumcell ball"><div class="sv">'+stats.ball.toFixed(1)+'</div><div class="sl">网球 hrs</div></div>'+
+    '<div class="sumcell strength"><div class="sv">'+stats.strength+'</div><div class="sl">力量 sessions</div></div>'+
+    '<div class="sumcell yoga"><div class="sv">'+stats.yoga+'</div><div class="sl">瑜伽 sessions</div></div>'+
+    '<div class="sumcell cardio"><div class="sv">'+(stats.cardio||0)+'</div><div class="sl">有氧 sessions</div></div>'+
+    '<div class="sumcell coach"><div class="sv">'+coachCount+'</div><div class="sl">教练课 sessions</div></div>';
+}
+
+// ─── WEEK TAB ────────────────────────────────────────────────────────
+function renderWeek(){
+  var start=weekStart();
+  document.getElementById('week-label').textContent=fmtWeek(start);
+  var entries=getWeekEntries(start);
+  var stats=calcStats(entries);
+  var todayStr=fmt(new Date());
+  var isPast=weekOffset!==0;
+  var logLabel=isPast?'+ 补记':'+ 记录';
+
+  // Cards
+  var html='';
+  ['ball','strength','yoga','cardio'].forEach(function(type){
+    var g=GOALS[type], val=stats[type], isHrs=type==='ball';
+    var p=pct(val,g.min), disp=isHrs?val.toFixed(1):String(val);
+    html+='<div class="card '+type+'">'+
+      '<div class="ch">'+
+        '<div><div class="ct">'+g.label+'</div>'+
+        '<div class="cg">目标 '+g.min+(g.max>g.min?'–'+g.max:'')+' '+g.unit+'</div></div>'+
+        '<div style="font-size:20px">'+g.icon+'</div>'+
+      '</div>'+
+      badge(val,g.min,g.max)+
+      '<div class="cv">'+disp+'<span class="cu">'+(isHrs?'hrs':'x')+'</span></div>'+
+      '<div class="pbar"><div class="pfill" style="width:'+p+'%"></div></div>'+
+      '<div class="logrow">'+
+        '<button class="lbtn" onclick="openModal(\''+type+'\',\''+contextDate()+'\')">'+logLabel+'</button>'+
+        (val>0?'<button class="lbtn undo" onclick="undoWeekLast(\''+type+'\')">撤销</button>':'')+
+      '</div>'+
+    '</div>';
+  });
+  document.getElementById('weekly-cards').innerHTML=html;
+
+  // Day grid
+  var byDate={};
+  entries.forEach(function(e){if(!byDate[e.date])byDate[e.date]=[];byDate[e.date].push(e.type)});
+  var gridHtml='';
+  DAYS.forEach(function(lbl,i){
+    var d=new Date(start); d.setDate(d.getDate()+i);
+    var ds=fmt(d), acts=byDate[ds]||[];
+    var dots=acts.length===0?'<div class="dot empty"></div>':
+      ['ball','strength','yoga','cardio','coach'].filter(function(t){return acts.indexOf(t)!==-1})
+        .map(function(t){return '<div class="dot '+t+'"></div>'}).join('');
+    gridHtml+='<div class="daycell">'+
+      '<div class="dlbl">'+lbl+'</div>'+
+      '<div class="ddate'+(ds===todayStr?' today':'')+'">'+ d.getDate()+'</div>'+
+      '<div class="ddots">'+dots+'</div>'+
+    '</div>';
+  });
+  document.getElementById('day-grid').innerHTML=gridHtml;
+
+  // Coach card — uses viewed month
+  var vs=weekStart(), vy=vs.getFullYear(), vm=vs.getMonth();
+  var allE=getEntries();
+  var monthCoach=allE.filter(function(e){
+    var d=new Date(e.date);
+    return e.type==='coach'&&d.getFullYear()===vy&&d.getMonth()===vm;
+  }).length;
+  var monthLbl=vs.toLocaleString('zh-CN',{year:'numeric',month:'long'});
+
+  var coachHtml='<div class="circles">';
+  [1,2].forEach(function(n){
+    coachHtml+='<div><div class="circle'+(monthCoach>=n?' filled':'')+'">'+
+      (monthCoach>=n?'✓':String(n))+'</div>'+
+      '<div class="clbl">课'+n+'</div></div>';
+  });
+  coachHtml+='</div><div class="cinfo">'+
+    '<h3>教练课 · '+monthLbl+'</h3>'+
+    '<p>本月已完成 '+monthCoach+' 次，目标 1–2 次/月</p>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button class="lbtn" onclick="openCoachModal()">'+logLabel+'教练课</button>'+
+      (monthCoach>0?'<button class="lbtn undo" onclick="undoCoach()">撤销</button>':'')+
+    '</div>'+
+  '</div>';
+  document.getElementById('coach-card').innerHTML=coachHtml;
+}
+
+// ─── MONTH TAB ───────────────────────────────────────────────────────
+function renderMonth(){
+  var ref=monthRef();
+  document.getElementById('month-label').textContent=ref.toLocaleString('zh-CN',{year:'numeric',month:'long'});
+
+  // All weeks whose Monday falls in this month
+  var weeks=getWeeksInMonth(ref);
+  var totals=sumWeeks(weeks);
+  // Coach: count by actual date in month (not week-based)
+  var y=ref.getFullYear(),m=ref.getMonth();
+  var coachCount=getEntries().filter(function(e){
+    var d=new Date(e.date);
+    return e.type==='coach'&&d.getFullYear()===y&&d.getMonth()===m;
+  }).length;
+
+  document.getElementById('month-summary').innerHTML=summaryHTML(totals,coachCount);
+
+  var html='';
+  weeks.forEach(function(ws,wi){
+    var we=getWeekEntries(ws), wst=calcStats(we);
+    html+='<div class="wkcard">'+
+      '<div class="wklbl">第'+(wi+1)+'周 · '+fmtWeek(ws)+'</div>'+
+      '<div class="wkgrid">';
+    [{key:'ball',lbl:'网球',isHrs:true,color:DARKS.ball,goal:GOALS.ball.min},
+     {key:'strength',lbl:'力量',isHrs:false,color:DARKS.strength,goal:GOALS.strength.min},
+     {key:'yoga',lbl:'瑜伽',isHrs:false,color:DARKS.yoga,goal:GOALS.yoga.min},
+     {key:'cardio',lbl:'有氧',isHrs:false,color:DARKS.cardio,goal:GOALS.cardio.min}
+    ].forEach(function(r){
+      var val=wst[r.key], disp=r.isHrs?val.toFixed(1):String(val);
+      var p=pct(val,r.goal);
+      html+='<div class="wkitem">'+
+        '<div class="wi-lbl">'+r.lbl+'</div>'+
+        '<div class="wi-val" style="color:'+r.color+'">'+disp+'<span class="wi-unit">'+(r.isHrs?'hrs':'x')+'</span></div>'+
+        '<div class="pbar" style="margin:5px 0 0"><div class="pfill" style="width:'+p+'%;background:'+COLORS[r.key]+'"></div></div>'+
+      '</div>';
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('month-breakdown').innerHTML=html;
+}
+
+// ─── YEAR TAB ────────────────────────────────────────────────────────
+function renderYear(){
+  var year=yearRef();
+  var now=new Date();
+  document.getElementById('year-label').textContent=year+'年';
+
+  // For each month: get weeks whose Monday is in that month — same as renderMonth
+  var monthWeeks=[];
+  for(var mi=0;mi<12;mi++){
+    monthWeeks.push(getWeeksInMonth(new Date(year,mi,1)));
+  }
+
+  // Monthly stats
+  var mStats=monthWeeks.map(function(wks){return sumWeeks(wks)});
+
+  // Coach per month by actual date (coach sessions are not week-based)
+  var allE=getEntries();
+  var mCoach=[];
+  for(var mi=0;mi<12;mi++){
+    mCoach.push(allE.filter(function(e){
+      var d=new Date(e.date);
+      return e.type==='coach'&&d.getFullYear()===year&&d.getMonth()===mi;
+    }).length);
+  }
+
+  // Annual totals
+  var tot={ball:0,strength:0,yoga:0,cardio:0,coach:0};
+  mStats.forEach(function(s,i){
+    tot.ball+=s.ball; tot.strength+=s.strength; tot.yoga+=s.yoga; tot.cardio+=(s.cardio||0); tot.coach+=mCoach[i];
+  });
+
+  document.getElementById('year-summary').innerHTML=summaryHTML(tot,tot.coach);
+
+  // Month-by-month table
+  var MNAMES=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  var rows=[
+    {key:'ball',     label:'🎾 网球',  unit:'hrs', goal:GOALS.ball.min*4,     color:COLORS.ball,     dark:DARKS.ball,     isHrs:true},
+    {key:'strength', label:'🏋️ 力量', unit:'x',   goal:GOALS.strength.min*4, color:COLORS.strength, dark:DARKS.strength, isHrs:false},
+    {key:'yoga',     label:'🧘 瑜伽',  unit:'x',   goal:GOALS.yoga.min*4,     color:COLORS.yoga,     dark:DARKS.yoga,     isHrs:false},
+    {key:'cardio',   label:'🏃 有氧',  unit:'x',   goal:GOALS.cardio.min*4,   color:COLORS.cardio,   dark:DARKS.cardio,   isHrs:false},
+    {key:'coach',    label:'👟 教练',  unit:'x',   goal:GOALS.coach.max,      color:COLORS.coach,    dark:DARKS.coach,    isHrs:false}
+  ];
+
+  var curMonth=now.getFullYear()===year?now.getMonth():-1;
+
+  var tbl='<table><thead><tr><th></th>';
+  MNAMES.forEach(function(mn,i){
+    tbl+='<th'+(i===curMonth?' style="color:var(--text);font-weight:600"':'')+'>'+ mn+'</th>';
+  });
+  tbl+='</tr></thead><tbody>';
+
+  rows.forEach(function(row){
+    tbl+='<tr>';
+    tbl+='<td style="color:'+row.dark+'">'+row.label+'</td>';
+    for(var mi=0;mi<12;mi++){
+      var s=mStats[mi];
+      var val=row.key==='coach'?mCoach[mi]:(row.isHrs?s.ball:s[row.key]);
+      if(isNaN(val)||val==null) val=0;
+      var disp=row.isHrs?(val>0?val.toFixed(1):'0.0'):(val>0?String(val):'0');
+      var isFuture=(year>now.getFullYear())||(year===now.getFullYear()&&mi>now.getMonth());
+      tbl+='<td'+(mi===curMonth?' class="cur-month"':'')+(isFuture?' style="opacity:.3"':'')+'>';
+      if(!isFuture||val>0){
+        tbl+='<span class="yval" style="color:'+(val>0?row.dark:'var(--border)')+'">'+disp+'</span>'+
+          miniBar(val,row.goal,row.color);
+      }
+      tbl+='</td>';
+    }
+    tbl+='</tr>';
+  });
+
+  tbl+='</tbody></table>';
+  document.getElementById('year-table').innerHTML=tbl;
+
+  // Weekly goal hit rate
+  var hitTypes=[
+    {key:'ball',     label:'网球',  goal:GOALS.ball.min,     isHrs:true,  color:COLORS.ball,     dark:DARKS.ball},
+    {key:'strength', label:'力量',  goal:GOALS.strength.min, isHrs:false, color:COLORS.strength, dark:DARKS.strength},
+    {key:'yoga',     label:'瑜伽',  goal:GOALS.yoga.min,     isHrs:false, color:COLORS.yoga,     dark:DARKS.yoga},
+    {key:'cardio',   label:'有氧',  goal:GOALS.cardio.min,   isHrs:false, color:COLORS.cardio,   dark:DARKS.cardio}
+  ];
+
+  var hitHtml='';
+  hitTypes.forEach(function(ht){
+    var total=0,hit=0;
+    // Walk all weeks whose Monday is in this year
+    for(var mi=0;mi<12;mi++){
+      monthWeeks[mi].forEach(function(ws){
+        var wEnd=new Date(ws); wEnd.setDate(wEnd.getDate()+6);
+        var isPast=wEnd<=now||(ws<=now&&wEnd>=now);
+        if(!isPast) return;
+        total++;
+        var we=getWeekEntries(ws), wst=calcStats(we);
+        var val=ht.isHrs?wst[ht.key]:wst[ht.key];
+        if(val>=ht.goal) hit++;
+      });
+    }
+    var rate=total>0?Math.round(hit/total*100):0;
+    var rateColor=rate>=80?'var(--green)':rate>=50?DARKS.ball:DARKS.strength;
+    hitHtml+='<div class="hitcell">'+
+      '<div class="hl">'+ht.label+'</div>'+
+      '<div class="hv" style="color:'+rateColor+'">'+rate+'<span style="font-size:14px">%</span></div>'+
+      '<div class="hs">'+hit+' / '+total+' 周达标</div>'+
+      '<div class="pbar" style="margin-top:8px"><div class="pfill" style="width:'+rate+'%;background:'+ht.color+'"></div></div>'+
+    '</div>';
+  });
+  document.getElementById('year-hitrate').innerHTML=hitHtml;
+}
+
+// ─── HISTORY TAB ─────────────────────────────────────────────────────
+function renderHistory(){
+  var entries=getEntries().slice().sort(function(a,b){return b.date.localeCompare(a.date)});
+  var list=document.getElementById('history-list');
+  if(!entries.length){list.innerHTML='<div class="empty">暂无记录<br><small>点击 + 开始记录</small></div>';return}
+  var html='';
+  entries.forEach(function(e){
+    var g=GOALS[e.type];
+    var detail=e.type==='ball'?e.extra+(Number(e.extra)===1?' hr':' hrs'):'1 session';
+    html+='<div class="histitem">'+
+      '<div class="hdot" style="background:'+COLORS[e.type]+'"></div>'+
+      '<div class="hbody">'+
+        '<div class="hrow"><span class="htype">'+g.icon+' '+g.label+'</span><span class="hdetail">'+detail+'</span></div>'+
+        (e.notes?'<div class="hnotes">'+e.notes+'</div>':'')+
+      '</div>'+
+      '<div class="hright">'+
+        '<div class="hdate">'+e.date+'</div>'+
+        '<button class="hdel" onclick="deleteEntry('+e.id+')">&times;</button>'+
+      '</div>'+
+    '</div>';
+  });
+  list.innerHTML=html;
+}
+
+// ─── Render dispatcher ───────────────────────────────────────────────
+function render(){
+  if(activeTab==='week') renderWeek();
+  else if(activeTab==='month') renderMonth();
+  else if(activeTab==='year') renderYear();
+  else renderHistory();
+}
+
+function switchTab(tab,btn){
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  btn.classList.add('active');
+  ['week','month','year','history'].forEach(function(t){
+    document.getElementById('tab-'+t).style.display=t===tab?'':'none';
+  });
+  render();
+}
+
+function changeWeek(d){weekOffset+=d;renderWeek()}
+function changeMonth(d){monthOffset+=d;renderMonth()}
+function changeYear(d){yearOffset+=d;renderYear()}
+function goToday(){weekOffset=0;monthOffset=0;yearOffset=0;render()}
+
+// ─── Modal ───────────────────────────────────────────────────────────
+function openModal(prefillType,prefillDate){
+  document.getElementById('m-type').value=prefillType||'ball';
+  document.getElementById('m-date').value=prefillDate||fmt(new Date());
+  document.getElementById('m-notes').value='';
+  updateExtra();
+  document.getElementById('modal').classList.add('open');
+}
+function openCoachModal(){openModal('coach',contextDate())}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+
+function updateExtra(){
+  var t=document.getElementById('m-type').value;
+  document.getElementById('m-extra-wrap').style.display=t==='ball'?'block':'none';
+}
+
+function saveEntry(){
+  var type=document.getElementById('m-type').value;
+  var date=document.getElementById('m-date').value;
+  var extra=type==='ball'?document.getElementById('m-extra').value:'1';
+  var notes=document.getElementById('m-notes').value.trim();
+  if(!date) return;
+  var entries=getEntries();
+  entries.push({id:Date.now(),type:type,date:date,extra:extra,notes:notes});
+  saveEntries(entries);
+  closeModal();
+  render();
+}
+
+function quickLog(type,date,extra){
+  var entries=getEntries();
+  entries.push({id:Date.now(),type:type,date:date,extra:extra,notes:''});
+  saveEntries(entries);
+  render();
+}
+
+function undoWeekLast(type){
+  var dates=weekDates(weekStart());
+  var entries=getEntries();
+  var lastIdx=-1;
+  entries.forEach(function(e,i){if(e.type===type&&dates.indexOf(e.date)!==-1)lastIdx=i});
+  if(lastIdx!==-1){entries.splice(lastIdx,1);saveEntries(entries);render()}
+}
+
+function undoCoach(){
+  var vs=weekStart(), vy=vs.getFullYear(), vm=vs.getMonth();
+  var entries=getEntries();
+  var lastIdx=-1;
+  entries.forEach(function(e,i){
+    var d=new Date(e.date);
+    if(e.type==='coach'&&d.getFullYear()===vy&&d.getMonth()===vm) lastIdx=i;
+  });
+  if(lastIdx!==-1){entries.splice(lastIdx,1);saveEntries(entries);render()}
+}
+
+function deleteEntry(id){
+  saveEntries(getEntries().filter(function(e){return e.id!==id}));
+  render();
+}
+
+// ─── Export / Import ─────────────────────────────────────────────────
+function exportData(){
+  var data=localStorage.getItem('ex_entries')||'[]';
+  var blob=new Blob([data],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url; a.download='exercise-data-'+fmt(new Date())+'.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event){
+  var file=event.target.files[0]; if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!Array.isArray(data)) throw new Error();
+      var existing=getEntries();
+      var existingIds=existing.map(function(e){return e.id});
+      var merged=existing.slice(), added=0;
+      data.forEach(function(entry){
+        if(existingIds.indexOf(entry.id)===-1){merged.push(entry);added++}
+      });
+      saveEntries(merged);
+      render();
+      alert('导入成功！新增 '+added+' 条，共 '+merged.length+' 条记录。');
+    }catch(err){alert('导入失败，请确认文件格式正确。')}
+  };
+  reader.readAsText(file);
+  event.target.value='';
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
