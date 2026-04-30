@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>运动追踪 · Exercise Tracker</title>
+<title>è¿åŠ¨è¿½è¸ª Â· Exercise Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -219,15 +219,15 @@
 <body>
 <div class="page">
   <div class="header">
-    <h1>运动<br><span>追踪</span></h1>
-    <button class="today-btn" onclick="goToday()">今天 Today</button>
+    <h1>è¿åŠ¨<br><span>è¿½è¸ª</span></h1>
+    <button class="today-btn" onclick="goToday()">ä»Šå¤© Today</button>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('week',this)">本周 Week</button>
-    <button class="tab" onclick="switchTab('month',this)">本月 Month</button>
-    <button class="tab" onclick="switchTab('year',this)">全年 Year</button>
-    <button class="tab" onclick="switchTab('history',this)">记录 Log</button>
+    <button class="tab active" onclick="switchTab('week',this)">æœ¬å‘¨ Week</button>
+    <button class="tab" onclick="switchTab('month',this)">æœ¬æœˆ Month</button>
+    <button class="tab" onclick="switchTab('year',this)">å…¨å¹´ Year</button>
+    <button class="tab" onclick="switchTab('history',this)">è®°å½• Log</button>
   </div>
 
   <div id="tab-week">
@@ -236,13 +236,13 @@
       <div class="week-label" id="week-label"></div>
       <button class="nav-btn" onclick="changeWeek(1)">&#8594;</button>
     </div>
-    <div class="section-title">每周目标 Weekly Goals</div>
+    <div class="section-title">æ¯å‘¨ç›®æ ‡ Weekly Goals</div>
     <div class="cards" id="weekly-cards"></div>
-    <div class="section-title">本周一览 Week Overview</div>
+    <div class="section-title">æœ¬å‘¨ä¸€è§ˆ Week Overview</div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
       <div class="day-grid" id="day-grid"></div>
     </div>
-    <div class="section-title">教练课 Monthly Coach</div>
+    <div class="section-title">æ•™ç»ƒè¯¾ Monthly Coach</div>
     <div class="coach-month" id="coach-month"></div>
   </div>
 
@@ -252,9 +252,9 @@
       <div class="week-label" id="month-label"></div>
       <button class="nav-btn" onclick="changeMonth(1)">&#8594;</button>
     </div>
-    <div class="section-title">月度概览 Monthly Overview</div>
+    <div class="section-title">æœˆåº¦æ¦‚è§ˆ Monthly Overview</div>
     <div class="month-summary" id="month-summary"></div>
-    <div class="section-title">周目标完成率 Weekly Breakdown</div>
+    <div class="section-title">å‘¨ç›®æ ‡å®ŒæˆçŽ‡ Weekly Breakdown</div>
     <div id="weekly-breakdown"></div>
   </div>
 
@@ -264,38 +264,38 @@
       <div class="week-label" id="year-label"></div>
       <button class="nav-btn" onclick="changeYear(1)">&#8594;</button>
     </div>
-    <div class="section-title">年度总计 Annual Totals</div>
+    <div class="section-title">å¹´åº¦æ€»è®¡ Annual Totals</div>
     <div class="month-summary" id="year-summary"></div>
-    <div class="section-title">月度明细 Month by Month</div>
+    <div class="section-title">æœˆåº¦æ˜Žç»† Month by Month</div>
     <div id="year-breakdown"></div>
   </div>
 
   <div id="tab-history" style="display:none">
-    <div class="section-title">全部记录 All Records</div>
+    <div class="section-title">å…¨éƒ¨è®°å½• All Records</div>
     <div class="history-list" id="history-list"></div>
   </div>
 </div>
 
-<button class="fab" onclick="openModal()" title="记录运动">+</button>
+<button class="fab" onclick="openModal()" title="è®°å½•è¿åŠ¨">+</button>
 
 <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
   <div class="modal">
-    <h2>记录运动</h2>
+    <h2>è®°å½•è¿åŠ¨</h2>
     <p>Log a workout session</p>
 
-    <label>类型 Type</label>
+    <label>ç±»åž‹ Type</label>
     <select id="m-type" onchange="updateModalExtra()">
-      <option value="ball">打网球 Play Tennis</option>
-      <option value="strength">力量训练 Strength Training</option>
-      <option value="yoga">瑜伽 Yoga</option>
-      <option value="coach">教练课 Coach Session</option>
+      <option value="ball">æ‰“ç½‘çƒ Play Tennis</option>
+      <option value="strength">åŠ›é‡è®­ç»ƒ Strength Training</option>
+      <option value="yoga">ç‘œä¼½ Yoga</option>
+      <option value="coach">æ•™ç»ƒè¯¾ Coach Session</option>
     </select>
 
-    <label>日期 Date</label>
+    <label>æ—¥æœŸ Date</label>
     <input type="date" id="m-date">
 
     <div id="m-extra-wrap">
-      <label>时长 Duration</label>
+      <label>æ—¶é•¿ Duration</label>
       <select id="m-extra">
         <option value="0.5">0.5 hr</option>
         <option value="1" selected>1 hr</option>
@@ -306,22 +306,22 @@
       </select>
     </div>
 
-    <label>备注 Notes <span style="font-weight:300;color:var(--muted)">(可选 optional)</span></label>
-    <textarea id="m-notes" placeholder="e.g. 练了发球和反手，状态不错..."></textarea>
+    <label>å¤‡æ³¨ Notes <span style="font-weight:300;color:var(--muted)">(å¯é€‰ optional)</span></label>
+    <textarea id="m-notes" placeholder="e.g. ç»ƒäº†å‘çƒå’Œåæ‰‹ï¼ŒçŠ¶æ€ä¸é”™..."></textarea>
 
     <div class="modal-actions">
-      <button class="btn btn-cancel" onclick="closeModal()">取消</button>
-      <button class="btn btn-save" onclick="saveEntry()">保存 Save</button>
+      <button class="btn btn-cancel" onclick="closeModal()">å–æ¶ˆ</button>
+      <button class="btn btn-save" onclick="saveEntry()">ä¿å­˜ Save</button>
     </div>
   </div>
 </div>
 
 <script>
 var GOALS = {
-  ball:     { label: '打网球', en: 'Play Tennis',     unit: 'hrs/wk', min: 3, max: 4, icon: '🎾', cls: 'ball' },
-  strength: { label: '力量', en: 'Strength Training', unit: 'x/wk',   min: 3, max: 3, icon: '🏋️', cls: 'strength' },
-  yoga:     { label: '瑜伽', en: 'Yoga',              unit: 'x/wk',   min: 2, max: 3, icon: '🧘', cls: 'yoga' },
-  coach:    { label: '教练', en: 'Coach Session',     unit: 'x/mo',   min: 1, max: 2, icon: '👟', cls: 'coach' }
+  ball:     { label: 'æ‰“ç½‘çƒ', en: 'Play Tennis',     unit: 'hrs/wk', min: 3, max: 4, icon: 'ðŸŽ¾', cls: 'ball' },
+  strength: { label: 'åŠ›é‡', en: 'Strength Training', unit: 'x/wk',   min: 3, max: 3, icon: 'ðŸ‹ï¸', cls: 'strength' },
+  yoga:     { label: 'ç‘œä¼½', en: 'Yoga',              unit: 'x/wk',   min: 2, max: 3, icon: 'ðŸ§˜', cls: 'yoga' },
+  coach:    { label: 'æ•™ç»ƒ', en: 'Coach Session',     unit: 'x/mo',   min: 1, max: 2, icon: 'ðŸ‘Ÿ', cls: 'coach' }
 };
 var GOALS_MIN = { ball: 3, strength: 3, yoga: 2 };
 var COLORS = { ball: '#C5E217', strength: '#3A6BC4', yoga: '#7C3AC4', coach: '#3AC49A' };
@@ -367,7 +367,7 @@ function currentMonthRef() {
 function fmtWeek(start) {
   var end = new Date(start); end.setDate(end.getDate() + 6);
   function mo(d) { return d.toLocaleString('zh-CN', {month:'short', day:'numeric'}); }
-  return mo(start) + ' – ' + mo(end);
+  return mo(start) + ' â€“ ' + mo(end);
 }
 
 function fmtMonth(d) { return d.toLocaleString('zh-CN', {year:'numeric', month:'long'}); }
@@ -405,10 +405,10 @@ function weekStats(entries) {
 
 function statusBadge(val, min, max) {
   if (val >= min) {
-    if (val > max) return '<span class="status-badge over">&#8593; 超出目标</span>';
-    return '<span class="status-badge done">&#10003; 达标</span>';
+    if (val > max) return '<span class="status-badge over">&#8593; è¶…å‡ºç›®æ ‡</span>';
+    return '<span class="status-badge done">&#10003; è¾¾æ ‡</span>';
   }
-  return '<span class="status-badge progress">进行中</span>';
+  return '<span class="status-badge progress">è¿›è¡Œä¸­</span>';
 }
 
 function renderWeek() {
@@ -428,15 +428,15 @@ function renderWeek() {
     html += '<div class="card ' + type + '">' +
       '<div class="card-header">' +
         '<div><div class="card-title">' + g.label + ' ' + g.en + '</div>' +
-        '<div class="card-goal">目标 ' + g.min + '–' + g.max + ' ' + g.unit + '</div></div>' +
+        '<div class="card-goal">ç›®æ ‡ ' + g.min + 'â€“' + g.max + ' ' + g.unit + '</div></div>' +
         '<div style="font-size:20px">' + g.icon + '</div>' +
       '</div>' +
       statusBadge(val, g.min, g.max) +
       '<div class="card-value">' + disp + '<span class="card-unit">' + (isHrs ? 'hrs' : 'x') + '</span></div>' +
       '<div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div></div>' +
       '<div class="log-area">' +
-        '<button class="log-btn" onclick="openModal(\'' + type + '\',\'' + contextDate() + '\')">' + (currentWeekOffset === 0 ? '+ 记录' : '+ 补记') + '</button>' +
-        (val > 0 ? '<button class="log-btn undo" onclick="undoLast(\'' + type + '\')">撤销</button>' : '') +
+        '<button class="log-btn" onclick="openModal(\'' + type + '\',\'' + contextDate() + '\')">' + (currentWeekOffset === 0 ? '+ è®°å½•' : '+ è¡¥è®°') + '</button>' +
+        (val > 0 ? '<button class="log-btn undo" onclick="undoLast(\'' + type + '\')">æ’¤é”€</button>' : '') +
       '</div>' +
     '</div>';
   });
@@ -477,15 +477,15 @@ function renderWeek() {
   [1,2].forEach(function(n) {
     coachHtml += '<div class="circle-wrap">' +
       '<div class="circle-bg' + (monthCoach >= n ? ' filled' : '') + '">' + (monthCoach >= n ? '&#10003;' : String(n)) + '</div>' +
-      '<div class="circle-lbl">课' + n + '</div>' +
+      '<div class="circle-lbl">è¯¾' + n + '</div>' +
     '</div>';
   });
   coachHtml += '</div><div class="coach-info">' +
-    '<h3>教练课 · ' + monthLabel + '</h3>' +
-    '<p>' + monthLabel + '已完成 ' + monthCoach + ' 次，目标 1–2 次/月</p>' +
+    '<h3>æ•™ç»ƒè¯¾ Â· ' + monthLabel + '</h3>' +
+    '<p>' + monthLabel + 'å·²å®Œæˆ ' + monthCoach + ' æ¬¡ï¼Œç›®æ ‡ 1â€“2 æ¬¡/æœˆ</p>' +
     '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
-    '<button class="log-btn" onclick="openModal(\'coach\',\'' + contextDate() + '\')">' + (currentWeekOffset === 0 ? '+ 记录教练课' : '+ 补记教练课') + '</button>' +
-    (monthCoach > 0 ? '<button class="log-btn undo" onclick="undoCoach()">撤销</button>' : '') +
+    '<button class="log-btn" onclick="openModal(\'coach\',\'' + contextDate() + '\')">' + (currentWeekOffset === 0 ? '+ è®°å½•æ•™ç»ƒè¯¾' : '+ è¡¥è®°æ•™ç»ƒè¯¾') + '</button>' +
+    (monthCoach > 0 ? '<button class="log-btn undo" onclick="undoCoach()">æ’¤é”€</button>' : '') +
     '</div>' +
   '</div>';
   document.getElementById('coach-month').innerHTML = coachHtml;
@@ -499,10 +499,10 @@ function renderMonth() {
   var coachCount = entries.filter(function(e) { return e.type === 'coach'; }).length;
 
   document.getElementById('month-summary').innerHTML =
-    '<div class="summary-cell ball"><div class="s-val">' + stats.ball.toFixed(1) + '</div><div class="s-lbl">网球 hrs</div></div>' +
-    '<div class="summary-cell strength"><div class="s-val">' + stats.strength + '</div><div class="s-lbl">力量 sessions</div></div>' +
-    '<div class="summary-cell yoga"><div class="s-val">' + stats.yoga + '</div><div class="s-lbl">瑜伽 sessions</div></div>' +
-    '<div class="summary-cell coach"><div class="s-val">' + coachCount + '</div><div class="s-lbl">教练课 sessions</div></div>';
+    '<div class="summary-cell ball"><div class="s-val">' + stats.ball.toFixed(1) + '</div><div class="s-lbl">ç½‘çƒ hrs</div></div>' +
+    '<div class="summary-cell strength"><div class="s-val">' + stats.strength + '</div><div class="s-lbl">åŠ›é‡ sessions</div></div>' +
+    '<div class="summary-cell yoga"><div class="s-val">' + stats.yoga + '</div><div class="s-lbl">ç‘œä¼½ sessions</div></div>' +
+    '<div class="summary-cell coach"><div class="s-val">' + coachCount + '</div><div class="s-lbl">æ•™ç»ƒè¯¾ sessions</div></div>';
 
   var weeks = getWeeksInMonth(ref);
   var bdHtml = '';
@@ -510,12 +510,12 @@ function renderMonth() {
     var wentries = getWeekEntries(wstart);
     var ws = weekStats(wentries);
     var cols = [
-      { lbl:'网球', val:ws.ball.toFixed(1), unit:'hrs', min:GOALS.ball.min, color:'#7A9200' },
-      { lbl:'力量', val:ws.strength, unit:'x', min:GOALS.strength.min, color:COLORS.strength },
-      { lbl:'瑜伽', val:ws.yoga, unit:'x', min:GOALS.yoga.min, color:COLORS.yoga }
+      { lbl:'ç½‘çƒ', val:ws.ball.toFixed(1), unit:'hrs', min:GOALS.ball.min, color:'#7A9200' },
+      { lbl:'åŠ›é‡', val:ws.strength, unit:'x', min:GOALS.strength.min, color:COLORS.strength },
+      { lbl:'ç‘œä¼½', val:ws.yoga, unit:'x', min:GOALS.yoga.min, color:COLORS.yoga }
     ];
     bdHtml += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;">' +
-      '<div style="font-size:12px;color:var(--muted);font-family:monospace;margin-bottom:10px">第' + (wi+1) + '周 · ' + fmtWeek(wstart) + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);font-family:monospace;margin-bottom:10px">ç¬¬' + (wi+1) + 'å‘¨ Â· ' + fmtWeek(wstart) + '</div>' +
       '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">';
     cols.forEach(function(c) {
       var pct = Math.min(100, Math.round((parseFloat(c.val) / c.min) * 100));
@@ -550,7 +550,7 @@ function renderHistory() {
   var entries = getEntries().slice().sort(function(a,b) { return b.date.localeCompare(a.date); });
   var list = document.getElementById('history-list');
   if (entries.length === 0) {
-    list.innerHTML = '<div class="empty-state">暂无记录<br><small>点击 + 按钮开始记录</small></div>';
+    list.innerHTML = '<div class="empty-state">æš‚æ— è®°å½•<br><small>ç‚¹å‡» + æŒ‰é’®å¼€å§‹è®°å½•</small></div>';
     return;
   }
   var html = '';
@@ -568,7 +568,7 @@ function renderHistory() {
       '</div>' +
       '<div class="h-right">' +
         '<div class="h-date">' + e.date + '</div>' +
-        '<button class="h-del" onclick="deleteEntry(' + e.id + ')" title="删除">&times;</button>' +
+        '<button class="h-del" onclick="deleteEntry(' + e.id + ')" title="åˆ é™¤">&times;</button>' +
       '</div>' +
     '</div>';
   });
@@ -578,7 +578,7 @@ function renderHistory() {
 function renderYear() {
   var now = new Date();
   var year = now.getFullYear() + currentYearOffset;
-  document.getElementById('year-label').textContent = year + '年';
+  document.getElementById('year-label').textContent = year + 'å¹´';
 
   var allEntries = getEntries();
   var yearEntries = allEntries.filter(function(e) {
@@ -593,13 +593,13 @@ function renderYear() {
   });
 
   document.getElementById('year-summary').innerHTML =
-    '<div class="summary-cell ball"><div class="s-val">' + totals.ball.toFixed(1) + '</div><div class="s-lbl">网球 hrs</div></div>' +
-    '<div class="summary-cell strength"><div class="s-val">' + totals.strength + '</div><div class="s-lbl">力量 sessions</div></div>' +
-    '<div class="summary-cell yoga"><div class="s-val">' + totals.yoga + '</div><div class="s-lbl">瑜伽 sessions</div></div>' +
-    '<div class="summary-cell coach"><div class="s-val">' + totals.coach + '</div><div class="s-lbl">教练课 sessions</div></div>';
+    '<div class="summary-cell ball"><div class="s-val">' + totals.ball.toFixed(1) + '</div><div class="s-lbl">ç½‘çƒ hrs</div></div>' +
+    '<div class="summary-cell strength"><div class="s-val">' + totals.strength + '</div><div class="s-lbl">åŠ›é‡ sessions</div></div>' +
+    '<div class="summary-cell yoga"><div class="s-val">' + totals.yoga + '</div><div class="s-lbl">ç‘œä¼½ sessions</div></div>' +
+    '<div class="summary-cell coach"><div class="s-val">' + totals.coach + '</div><div class="s-lbl">æ•™ç»ƒè¯¾ sessions</div></div>';
 
   // Month by month breakdown
-  var months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  var months = ['1æœˆ','2æœˆ','3æœˆ','4æœˆ','5æœˆ','6æœˆ','7æœˆ','8æœˆ','9æœˆ','10æœˆ','11æœˆ','12æœˆ'];
   var bdHtml = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">';
 
   // Header row
@@ -613,10 +613,10 @@ function renderYear() {
 
   // One row per activity
   var rows = [
-    { key: 'ball',     label: '网球', color: '#C5E217', darkColor: '#7A9200', unit: 'h',  goal: 4*4,  isHrs: true },
-    { key: 'strength', label: '力量', color: '#3A6BC4', darkColor: '#3A6BC4', unit: 'x',  goal: 3*4,  isHrs: false },
-    { key: 'yoga',     label: '瑜伽', color: '#7C3AC4', darkColor: '#7C3AC4', unit: 'x',  goal: 2*4,  isHrs: false },
-    { key: 'coach',    label: '教练', color: '#3AC49A', darkColor: '#3AC49A', unit: 'x',  goal: 2,    isHrs: false }
+    { key: 'ball',     label: 'ç½‘çƒ', color: '#C5E217', darkColor: '#7A9200', unit: 'h',  goal: 4*4,  isHrs: true },
+    { key: 'strength', label: 'åŠ›é‡', color: '#3A6BC4', darkColor: '#3A6BC4', unit: 'x',  goal: 3*4,  isHrs: false },
+    { key: 'yoga',     label: 'ç‘œä¼½', color: '#7C3AC4', darkColor: '#7C3AC4', unit: 'x',  goal: 2*4,  isHrs: false },
+    { key: 'coach',    label: 'æ•™ç»ƒ', color: '#3AC49A', darkColor: '#3AC49A', unit: 'x',  goal: 2,    isHrs: false }
   ];
 
   rows.forEach(function(row, ri) {
@@ -638,7 +638,7 @@ function renderYear() {
 
       bdHtml += '<div style="padding:8px 4px;text-align:center;' + (isFuture ? 'opacity:0.35;' : '') + '">';
       if (val > 0 || !isFuture) {
-        bdHtml += '<div style="font-size:12px;font-weight:500;color:' + (val > 0 ? row.darkColor : 'var(--border)') + ';margin-bottom:4px;line-height:1">' + (dispVal || '–') + '</div>';
+        bdHtml += '<div style="font-size:12px;font-weight:500;color:' + (val > 0 ? row.darkColor : 'var(--border)') + ';margin-bottom:4px;line-height:1">' + (dispVal || 'â€“') + '</div>';
         bdHtml += '<div style="height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 2px">' +
           '<div style="width:' + pct + '%;height:100%;background:' + row.color + ';border-radius:2px"></div>' +
         '</div>';
@@ -652,13 +652,13 @@ function renderYear() {
 
   // Weekly goal hit rate summary
   bdHtml += '<div style="margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;">';
-  bdHtml += '<div style="font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">周目标达成 Goal hit rate (' + year + ')</div>';
+  bdHtml += '<div style="font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">å‘¨ç›®æ ‡è¾¾æˆ Goal hit rate (' + year + ')</div>';
   bdHtml += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">';
 
   var hitRateTypes = [
-    { key:'ball',     label:'网球',  goal: GOALS_MIN.ball,     isHrs: true  },
-    { key:'strength', label:'力量',  goal: GOALS_MIN.strength, isHrs: false },
-    { key:'yoga',     label:'瑜伽',  goal: GOALS_MIN.yoga,     isHrs: false }
+    { key:'ball',     label:'ç½‘çƒ',  goal: GOALS_MIN.ball,     isHrs: true  },
+    { key:'strength', label:'åŠ›é‡',  goal: GOALS_MIN.strength, isHrs: false },
+    { key:'yoga',     label:'ç‘œä¼½',  goal: GOALS_MIN.yoga,     isHrs: false }
   ];
 
   hitRateTypes.forEach(function(hr) {
@@ -686,7 +686,7 @@ function renderYear() {
     bdHtml += '<div>' +
       '<div style="font-size:12px;color:var(--muted);margin-bottom:6px">' + hr.label + '</div>' +
       '<div style="font-size:22px;font-weight:300;color:' + rateColor + ';line-height:1">' + rate + '<span style="font-size:13px;margin-left:2px">%</span></div>' +
-      '<div style="font-size:11px;color:var(--muted);margin-top:3px">' + hitWeeks + ' / ' + totalWeeks + ' 周达标</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-top:3px">' + hitWeeks + ' / ' + totalWeeks + ' å‘¨è¾¾æ ‡</div>' +
       '<div style="height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden">' +
         '<div style="width:' + rate + '%;height:100%;background:' + rateColor + ';border-radius:2px"></div>' +
       '</div>' +
